@@ -96,7 +96,21 @@ class Reviews extends Template
             ->addAttributeToSelect('name')
             ->addIdFilter(array_keys($productIds));
     }
-    
+
+    /**
+     * @param $productId
+     *  Getting product collection for the reviewed product.
+     * @return \Magento\Catalog\Api\Data\ProductInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getProductInfo(array $productId){
+
+        return $this->productCollectionFactory->create()
+            ->addFieldToSelect('small_image')
+            ->addFieldToSelect('name')
+            ->addIdFilter(array_keys($productId));
+    }
+
     /**
      * Get the current product filter
      * 
