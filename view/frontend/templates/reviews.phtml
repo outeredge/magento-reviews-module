@@ -23,8 +23,23 @@
         </div>
         <ol class="items review-items">
         <?php foreach ($_items as $_review):?>
+            <!-- Make array with associated product id as key, for productCollectionFactory -->
+            <?php $current_product[$_review->getEntityPkValue()]=true; ?>
+            <!-- Get the product associated with the review(name and image) -->
+            <?php $_productCollection=$block->getProductInfo($current_product);
+                foreach ($_productCollection as $_product);
+            ?>
             <li class="item review-item" itemscope itemprop="review" itemtype="http://schema.org/Review">
-                <div class="review-title" itemprop="name"><?php echo $block->escapeHtml($_review->getTitle()) ?></div>
+                <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="review-title-product-image">
+                    <div class="product-title" itemprop="product-name"><?php echo $block->escapeHtml($_product->getName()) ?></div>
+                    <?php // Product Image
+                    $imageBlock =  $block->getLayout()->createBlock('Magento\Catalog\Block\Product\ListProduct');
+                    $productImage = $imageBlock->getImage($_product, 'category_page_list');
+                    ?>
+                    <div class="review-product-image-block">
+                        <?php echo $productImage->toHtml(); ?>
+                    </div>
+                </a>
                 <?php if (count($_review->getRatingVotes())): ?>
                     <div class="review-ratings">
                     <?php foreach ($_review->getRatingVotes() as $_vote): ?>
@@ -42,6 +57,7 @@
                     </div>
                 <?php endif; ?>
                 <div class="review-content" itemprop="description">
+                    <div class="review-title" itemprop="name"><?php echo $block->escapeHtml($_review->getTitle()) ?></div>
                     <?php echo nl2br($block->escapeHtml(strip_tags($_review->getDetail()))) ?>
                 </div>
                 <div class="review-details">
