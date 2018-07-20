@@ -108,6 +108,7 @@ class Reviews extends Template
         return $this->productCollectionFactory->create()
             ->addFieldToSelect('small_image')
             ->addFieldToSelect('name')
+            ->setPageSize(1)
             ->addIdFilter(array_keys($productId));
     }
 
