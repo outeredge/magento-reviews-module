@@ -7,6 +7,7 @@ use Magento\Framework\View\Element\Template\Context;
 use Magento\Review\Model\ResourceModel\Review\CollectionFactory as ReviewCollectionFactory;
 use Magento\Review\Model\ResourceModel\Review\Collection as ReviewCollection;
 use Magento\Review\Model\Review;
+use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Collection as ProductCollection;
 
@@ -28,6 +29,11 @@ class Reviews extends Template
     protected $productCollectionFactory;
     
     /**
+     * @var Product
+     */
+    protected $product;
+    
+    /**
      * @var integer
      */
     protected $defaultLimit = 10;
@@ -44,10 +50,12 @@ class Reviews extends Template
         Context $context,
         ReviewCollectionFactory $reviewCollectionFactory,
         ProductCollectionFactory $productCollectionFactory,
+        Product $product,
         array $data = []
     ) {
         $this->reviewCollectionFactory = $reviewCollectionFactory;
         $this->productCollectionFactory = $productCollectionFactory;
+        $this->product = $product;
         parent::__construct($context, $data);
     }
     
@@ -97,19 +105,9 @@ class Reviews extends Template
             ->addIdFilter(array_keys($productIds));
     }
 
-    /**
-     * @param $productId
-     *  Getting product collection for the reviewed product.
-     * @return \Magento\Catalog\Api\Data\ProductInterface
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function getProductInfo(array $productId){
-
-        return $this->productCollectionFactory->create()
-            ->addFieldToSelect('small_image')
-            ->addFieldToSelect('name')
-            ->setPageSize(1)
-            ->addIdFilter(array_keys($productId));
+    public function getProduct($productId)
+    {
+        return $this->product->load($productId);
     }
 
     /**
@@ -135,9 +133,6 @@ class Reviews extends Template
                 'reviews.pager'
             )->setAvailableLimit([
                 $this->defaultLimit => $this->defaultLimit,
-                //25 => 25,
-                //50 => 50,
-                //500 => 500
             ])->setShowPerPage(true)->setCollection(
                 $this->getReviews()
             );
