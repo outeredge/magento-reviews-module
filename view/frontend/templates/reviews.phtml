@@ -23,10 +23,8 @@
         </div>
         <ol class="items review-items">
         <?php foreach ($_items as $_review): ?>
-            <!-- Make array with associated product id as key, for productCollectionFactory -->
-            <?php $current_product[$_review->getEntityPkValue()]=true; ?>
             <!-- Get the product associated with the review(name and image) -->
-            <?php $_productCollection=$block->getProductInfo($current_product); ?>
+            <?php $_productCollection=$block->getProductInfo([$_review->getEntityPkValue() => true]); ?>
             <?php foreach ($_productCollection as $_product): ?>
                 <li class="item review-item" itemscope itemprop="review" itemtype="http://schema.org/Review">
                     <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="review-title-product-image">
