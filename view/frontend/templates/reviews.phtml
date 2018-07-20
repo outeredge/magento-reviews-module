@@ -24,10 +24,10 @@
         <ol class="items review-items">
         <?php foreach ($_items as $_review): ?>
             <!-- Get the product associated with the review(name and image) -->
-            <?php $_productCollection=$block->getProductInfo([$_review->getEntityPkValue() => true]); ?>
-            <?php foreach ($_productCollection as $_product): ?>
+            <?php $_product = $block->getProduct($_review->getEntityPkValue()); ?>
+            <?php $enabled = ($_product->getStatus() == \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED); ?>
                 <li class="item review-item" itemscope itemprop="review" itemtype="http://schema.org/Review">
-                    <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="review-title-product-image">
+                    <<?php echo $enabled ? 'a href="' . $_product->getProductUrl() . '"' : 'div' ?> class="review-title-product-image">
                         <div class="product-title" itemprop="product-name"><?php echo $block->escapeHtml($_product->getName()) ?></div>
                         <?php // Product Image
                         $imageBlock =  $block->getLayout()->createBlock('Magento\Catalog\Block\Product\ListProduct');
@@ -36,7 +36,7 @@
                         <div class="review-product-image-block">
                             <?php echo $productImage->toHtml(); ?>
                         </div>
-                    </a>
+                    </<?php echo $enabled ? 'a' : 'div'?>>               
                     <?php if (count($_review->getRatingVotes())): ?>
                         <div class="review-ratings">
                         <?php foreach ($_review->getRatingVotes() as $_vote): ?>
@@ -68,7 +68,6 @@
                         </p>
                     </div>
                 </li>
-            <?php endforeach; ?>
             <?php endforeach; ?>
         </ol>
         <div class="toolbar review-toolbar">
